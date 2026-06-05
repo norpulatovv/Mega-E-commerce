@@ -1,9 +1,8 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',
+  basePath: '/Mega-E-commerce',
+  images: { unoptimized: true },
+}
 
-const nextConfig: NextConfig = {
-  images: {
-    domains: ['cdn.dummyjson.com'],
-  },
-};
-
-export default nextConfig;
+export default nextConfig
