@@ -10,6 +10,20 @@ import {
     FiShield, FiTruck, FiCreditCard, FiCheck
 } from 'react-icons/fi'
 
+// Deterministic pseudo-random particle positions.
+// Computed once from index only (no Math.random, no useEffect),
+// so server-rendered HTML and client HTML always match exactly.
+const particles = Array.from({ length: 20 }, (_, i) => {
+    const seed = i * 137.5
+    return {
+        left: seed % 100,
+        top: (seed * 1.7) % 100,
+        xOffset: (seed % 20) - 10,
+        duration: 3 + (i % 3),
+        delay: (i % 5) * 0.4,
+    }
+})
+
 export default function Footer() {
     const [email, setEmail] = useState('')
     const [subscribed, setSubscribed] = useState(false)
@@ -63,7 +77,7 @@ export default function Footer() {
 
     return (
         <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
-            
+
             {/* Animated Wave Background */}
             <div className="absolute inset-0 overflow-hidden opacity-10">
                 <motion.svg
@@ -85,25 +99,25 @@ export default function Footer() {
                 </motion.svg>
             </div>
 
-            {/* Floating Particles */}
+            {/* Floating Particles (deterministic, hydration-safe) */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(20)].map((_, i) => (
+                {particles.map((p, i) => (
                     <motion.div
                         key={i}
                         animate={{
                             y: [0, -30, 0],
-                            x: [0, Math.random() * 20 - 10, 0],
+                            x: [0, p.xOffset, 0],
                             opacity: [0.2, 0.5, 0.2]
                         }}
                         transition={{
-                            duration: 3 + Math.random() * 2,
+                            duration: p.duration,
                             repeat: Infinity,
-                            delay: Math.random() * 2
+                            delay: p.delay
                         }}
                         className="absolute w-2 h-2 bg-white rounded-full"
                         style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
+                            left: `${p.left}%`,
+                            top: `${p.top}%`,
                         }}
                     />
                 ))}
@@ -138,7 +152,7 @@ export default function Footer() {
             {/* Main Footer Content */}
             <div className="relative container mx-auto px-4 py-16">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
-                    
+
                     {/* Company Info */}
                     <div className="lg:col-span-2">
                         <motion.div
@@ -152,7 +166,7 @@ export default function Footer() {
                                 </div>
                             </Link>
                             <p className="text-gray-400 mb-6 leading-relaxed">
-                                Your ultimate destination for quality products at amazing prices. 
+                                Your ultimate destination for quality products at amazing prices.
                                 We bring you the best shopping experience with fast delivery and secure payments.
                             </p>
 
@@ -308,10 +322,10 @@ export default function Footer() {
             <div className="relative border-t border-white/10 py-8">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        
+
                         {/* Copyright */}
                         <div className="text-gray-400 text-sm flex items-center gap-2">
-                            © 2024 MegaShop. Made with 
+                            © 2024 MegaShop. Made with
                             <motion.div
                                 animate={{ scale: [1, 1.3, 1] }}
                                 transition={{ duration: 1, repeat: Infinity }}
