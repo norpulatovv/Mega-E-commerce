@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -24,7 +24,21 @@ interface Product {
     images: string[]
 }
 
-export default function ProductsPage() {
+function LoadingScreen() {
+    return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                className="text-6xl"
+            >
+                <FiLoader />
+            </motion.div>
+        </div>
+    )
+}
+
+function ProductsContent() {
     const searchParams = useSearchParams()
     const urlCategory = searchParams.get('category') || 'all'
     const urlSearch = searchParams.get('search') || ''
@@ -66,8 +80,9 @@ export default function ProductsPage() {
         setSelectedCategory(urlCategory)
         setSearchQuery(urlSearch)
     }, [urlCategory, urlSearch])
+
     const filteredProducts = useMemo(() => {
-        let filtered = products.filter(product => {
+        const filtered = products.filter(product => {
             const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory
             const matchesSearch =
                 product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -99,17 +114,7 @@ export default function ProductsPage() {
     }
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                    className="text-6xl"
-                >
-                    <FiLoader />
-                </motion.div>
-            </div>
-        )
+        return <LoadingScreen />
     }
 
     return (
@@ -385,5 +390,13 @@ export default function ProductsPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function ProductsPage() {
+    return (
+        <Suspense fallback={<LoadingScreen />}>
+            <ProductsContent />
+        </Suspense>
     )
 }
